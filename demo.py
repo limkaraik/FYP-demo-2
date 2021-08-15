@@ -23,10 +23,10 @@ misc = Misc(screen)
 
 def play():
     #env
-    goals = [1,7,61,70]
-    theif = 31
-    defenders = [13,36,45]
-    limit=20
+    goals = [1,7,60,61]
+    theif = 34
+    defenders = [13,37,45]
+    limit=10
     gameover = False
 
     #init graph
@@ -45,7 +45,6 @@ def play():
             if event.type == pygame.MOUSEBUTTONUP:
                 #player select where to move for thief
                 turn, attacker_a =graph.check_move()
-                print(turn, attacker_a)
                 if turn:
                     #police move base on algo here
                     defender_a=algo.move(graph.thief,graph.police)
