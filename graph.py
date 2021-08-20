@@ -37,6 +37,7 @@ class Graph:
         self.edges={}
         self.goals= set(goals)
         self.move = 0
+        self.next_thief = None
 
     def Node(self,x,y,width,height,inactive_color,active_color,pos):
         cur = pygame.mouse.get_pos()
@@ -76,7 +77,7 @@ class Graph:
     def choose(self,p):
         if p in self.graph[self.thief] and self.move==0:
             self.thief_visited.add(p)
-            self.thief = p
+            self.next_thief = p
             self.move=1
     
     def reset_move(self):
@@ -84,8 +85,11 @@ class Graph:
     
     def check_move(self):
         if self.move==1:
-            return True, self.thief
+            return True, self.next_thief
         return False, self.thief
+
+    def thief_move(self):
+        self.thief = self.next_thief
 
     def police_move(self,pos):
         for i in range(len(pos)):

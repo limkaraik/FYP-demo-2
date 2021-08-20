@@ -1,11 +1,12 @@
 import pygame
 import time
 pygame.init()
-
 from graph import Graph
 from misc import Misc
-from algo import Algo
 from data import DATA
+from backend.agent import *
+from backend.env import Env
+from backend.data import *
 
 WINDOW_SIZE = (1200,800)
 BACKGROUND = (255,255,255)
@@ -23,17 +24,20 @@ misc = Misc(screen)
 
 def play():
     #env
-    goals = [1,7,60,61]
-    theif = 34
-    defenders = [13,37,45]
-    limit=10
+    environment=Env('yishun')
+    goals = EXITS
+    theif = INIT_LOC[0]
+    defenders = DEFENDER_INIT[0]
+    limit=TIME_HORIZON
     gameover = False
+
+     #init defender
+    defender=AgentEvalYishun()
 
     #init graph
     graph = Graph(screen,theif,defenders,goals)
 
-    #init algo
-    algo = Algo(DATA)
+    game_state=environment.reset()
 
     #main loop
     running = True
@@ -47,10 +51,13 @@ def play():
                 turn, attacker_a =graph.check_move()
                 if turn:
                     #police move base on algo here
-                    defender_a=algo.move(graph.thief,graph.police)
+                    defender_obs, attacker_obs = game_state.obs()
+                    def_current_legal_action, att_current_legal_action = game_state.legal_action()
+                    defender_a = defender.select_action([defender_obs], [def_current_legal_action])
+                    game_state = environment.simu_step(defender_a, attacker_a)
                     #move police in graph
+                    graph.thief_move()
                     graph.police_move(defender_a)
-
                     limit-=1
                 #after police has moved etc....
                 graph.reset_move()
